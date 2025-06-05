@@ -1,9 +1,70 @@
+import { useState } from "react";
 
 function App() {
-  
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [selectedOption, setSelectedOption] = useState('');
+  const [yearsOfExperience, setYearsOfExprience] = useState(0);
+  const [description, setDescription] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(`
+      -Nome completo: ${name};
+      -Username: ${username};
+      -Password: ${password};
+      -Specializzazione: ${selectedOption};
+      -Anni di esperienza: ${yearsOfExperience};
+      -Breve descrizione: ${description};
+      `)
+  }
+
 
   return (
     <>
+    <h1>Compila il form per accedere alla piattaforma</h1>
+    <form onSubmit={handleSubmit}>
+      <h4>Nome completo</h4>
+      <input 
+        type="text" 
+        name="names" 
+        value={name} 
+        onChange={(e) => setName(e.target.value)}
+      />
+      <h4>Username</h4>
+      <input
+        type="text" 
+        name="username" 
+        value={username} 
+        onChange={(e) => setUsername(e.target.value)}
+       />
+      <h4>Password</h4>
+      <input 
+        type="password" 
+        name="password"
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)}
+       />
+      <h4>Specializzazione in</h4>
+      <select name="option" value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}>
+        <option value="">Seleziona un'opzione</option>
+        <option value="option1">Full Stack</option>
+        <option value="option2">Frontend</option>
+        <option value="option3">Backend</option>
+      </select>
+      <h4>Anni di esperienza</h4>
+      <input 
+        type="number" 
+        name="years" 
+        value={yearsOfExperience} 
+        onChange={(e) => setYearsOfExprience(e.target.value)}
+      />
+      <h4>Aggiungi una breve descrizione su di te</h4>
+      <textarea name="description" value={description} 
+        onChange={(e) => setDescription(e.target.value)}></textarea>
+      <button>Invia Form</button>
+    </form>
       
     </>
   )

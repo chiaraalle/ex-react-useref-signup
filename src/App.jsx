@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 
 function App() {
 
@@ -9,12 +9,17 @@ function App() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedOption, setSelectedOption] = useState('');
-  const [yearsOfExperience, setYearsOfExprience] = useState(0);
+  //const [selectedOption, setSelectedOption] = useState('');
+  //const [yearsOfExperience, setYearsOfExprience] = useState(0);
+  const selectedOptionRef = useRef();
+  const yearsOfExperienceRef = useRef();
   const [description, setDescription] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const selectedOption= selectedOptionRef.current
+    const yearsOfExperience = yearsOfExperienceRef.current
 
     // Validazione dei campi
     if (
@@ -22,8 +27,8 @@ function App() {
       !username || 
       !password || 
       !description || 
-      !yearsOfExperience || 
-      !selectedOption ||
+      !yearsOfExperienceRef || 
+      !selectedOptionRef ||
       !isUsernameValid ||
       !isPasswordValid ||
       !isDescriptionValid
@@ -36,8 +41,8 @@ function App() {
       -Nome completo: ${name};
       -Username: ${username};
       -Password: ${password};
-      -Specializzazione: ${selectedOption};
-      -Anni di esperienza: ${yearsOfExperience};
+      -Specializzazione: ${selectedOption.value};
+      -Anni di esperienza: ${yearsOfExperience.value};
       -Breve descrizione: ${description};
       `)
 
@@ -45,8 +50,8 @@ function App() {
     setName('');
     setUsername('');
     setPassword('');
-    setSelectedOption('');
-    setYearsOfExprience(0);
+    selectedOptionRef('');
+    yearsOfExperienceRef(0);
     setDescription('');
   }
 
@@ -115,24 +120,24 @@ function App() {
         {isPasswordValid ? '✓ Password valida' : 'Password deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo'}
       </strong> }
       <p>Specializzazione in</p>
-      <select name="option" value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}>
+      <select name="option" ref={selectedOptionRef}>
         <option value="">Seleziona un'opzione</option>
         <option value="Full Stack">Full Stack</option>
         <option value="Frontend">Frontend</option>
         <option value="Backend">Backend</option>
       </select>
-      {selectedOption !== "" && <strong style={{ color: selectedOption ? 'green' : 'red' }}>
-        {selectedOption ? '✓ Specializzazione selezionata' : 'Seleziona una specializzazione'}
+      {selectedOptionRef.current && <strong style={{ color: selectedOptionRef.current.value ? 'green' : 'red' }}>
+      {selectedOptionRef.current.value ? '✓ Specializzazione selezionata' : 'Seleziona una specializzazione'}
       </strong>}
       <p>Anni di esperienza</p>
       <input 
         type="number" 
         name="years" 
-        value={yearsOfExperience} 
-        onChange={(e) => setYearsOfExprience(e.target.value)}
+        min="0"
+        ref={yearsOfExperienceRef}
       />
-      {yearsOfExperience > 0 && <strong style={{ color: yearsOfExperience > 0 ? 'green' : 'red' }}>
-        {yearsOfExperience > 0 ? '✓ Numero valido' : 'Inserire un numero positivo'}
+      {yearsOfExperienceRef > 0 && <strong style={{ color: yearsOfExperienceRef > 0 ? 'green' : 'red' }}>
+        {yearsOfExperienceRef > 0 ? '✓ Numero valido' : 'Inserire un numero positivo'}
       </strong>}
       <p>Aggiungi una breve descrizione su di te</p>
       <textarea name="description" value={description} 
@@ -150,25 +155,9 @@ function App() {
 export default App
 
 /*
-
-📌 Milestone 2: Validare in tempo reale
-Aggiungere la validazione in tempo reale dei seguenti campi:
-
-✅ Username: Deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli).
-
-✅ Password: Deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo.
-
-✅ Descrizione: Deve contenere tra 100 e 1000 caratteri (senza spazi iniziali e finali).
-
-Suggerimento: Per semplificare la validazione, puoi definire tre stringhe con i caratteri validi e usare .includes() per controllare se i caratteri appartengono a una di queste categorie:
-
-const letters = "abcdefghijklmnopqrstuvwxyz";
-const numbers = "0123456789";
-const symbols = "!@#$%^&*()-_=+[]{}|;:'\\",.<>?/`~";
-Per ciascuno dei campi validati in tempo reale, mostrare un messaggio di errore (rosso) nel caso non siano validi, oppure un messaggio di conferma (verde) nel caso siano validi.
-
 📌 Milestone 3: Convertire i Campi Non Controllati
-Non tutti i campi del form necessitano di essere aggiornati a ogni carattere digitato. Alcuni di essi non influenzano direttamente l’interfaccia mentre l’utente li compila, quindi è possibile gestirli in modo più efficiente.
+Non tutti i campi del form necessitano di essere aggiornati a ogni carattere digitato. Alcuni di essi non influenzano direttamente l’interfaccia mentre l’utente li compila,
+ quindi è possibile gestirli in modo più efficiente.
 
 Analizza il form: Identifica quali campi devono rimanere controllati e quali invece possono essere non controllati senza impattare l’esperienza utente.
 Converti i campi non controllati: Usa useRef() per gestirli e recuperare il loro valore solo al momento del submit.

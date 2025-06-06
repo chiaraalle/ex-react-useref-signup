@@ -10,6 +10,13 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validazione dei campi
+    if (!name || !username || !password || !description || !yearsOfExperience || !selectedOption) {
+    alert('Per favore compila tutti i campi');
+    return;
+    }
+
     console.log(`
       -Nome completo: ${name};
       -Username: ${username};
@@ -18,6 +25,14 @@ function App() {
       -Anni di esperienza: ${yearsOfExperience};
       -Breve descrizione: ${description};
       `)
+
+    //Pulisco il form
+    setName('');
+    setUsername('');
+    setPassword('');
+    setSelectedOption('');
+    setYearsOfExprience(0);
+    setDescription('');
   }
 
 
@@ -32,6 +47,9 @@ function App() {
         value={name} 
         onChange={(e) => setName(e.target.value)}
       />
+      <strong style={{ color: name.length > 10 ? 'green' : 'red' }}>
+        {name.length > 10 ? '✓ Nome Valido' : 'Nome deve avere almeno 10 caratteri'}
+      </strong>
       <h4>Username</h4>
       <input
         type="text" 
@@ -39,6 +57,9 @@ function App() {
         value={username} 
         onChange={(e) => setUsername(e.target.value)}
        />
+       <strong style={{ color: username.length >= 6 ? 'green' : 'red' }}>
+        {username.length >= 6 ? '✓ Username valido' : 'Username deve avere almeno 6 caratteri'}
+       </strong>
       <h4>Password</h4>
       <input 
         type="password" 
@@ -46,13 +67,19 @@ function App() {
         value={password} 
         onChange={(e) => setPassword(e.target.value)}
        />
+       <strong style={{ color: password.length >= 8 ? 'green' : 'red' }}>
+        {password.length >= 8 ? '✓ Password valida' : 'Password deve avere almeno 8 caratteri'}
+       </strong>
       <h4>Specializzazione in</h4>
       <select name="option" value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}>
         <option value="">Seleziona un'opzione</option>
-        <option value="option1">Full Stack</option>
-        <option value="option2">Frontend</option>
-        <option value="option3">Backend</option>
+        <option value="Full Stack">Full Stack</option>
+        <option value="Frontend">Frontend</option>
+        <option value="Backend">Backend</option>
       </select>
+      <strong style={{ color: selectedOption ? 'green' : 'red' }}>
+        {selectedOption ? '✓ Specializzazione selezionata' : 'Seleziona una specializzazione'}
+      </strong>
       <h4>Anni di esperienza</h4>
       <input 
         type="number" 
@@ -60,9 +87,15 @@ function App() {
         value={yearsOfExperience} 
         onChange={(e) => setYearsOfExprience(e.target.value)}
       />
+      <strong style={{ color: yearsOfExperience > 0 ? 'green' : 'red' }}>
+        {yearsOfExperience > 0 ? '✓ Anni di esperienza validi' : 'Inserire un numero positivo'}
+      </strong>
       <h4>Aggiungi una breve descrizione su di te</h4>
       <textarea name="description" value={description} 
         onChange={(e) => setDescription(e.target.value)}></textarea>
+        <strong style={{ color: description.length >= 20 && description.length <= 100 ? 'green' : 'red' }}>
+          {description.length >= 20 && description.length <= 100 ? '✓ Descrizione valida' : 'La descrizione deve essere tra 100 e 1000 caratteri'}
+        </strong>
       <button>Invia Form</button>
     </form>
       

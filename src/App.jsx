@@ -17,7 +17,17 @@ function App() {
     e.preventDefault();
 
     // Validazione dei campi
-    if (!name || !username || !password || !description || !yearsOfExperience || !selectedOption) {
+    if (
+      !name || 
+      !username || 
+      !password || 
+      !description || 
+      !yearsOfExperience || 
+      !selectedOption ||
+      !isUsernameValid ||
+      !isPasswordValid ||
+      !isDescriptionValid
+    ) {
     alert('Per favore compila tutti i campi');
     return;
     }

@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 function App() {
+
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&/*()-_=+[]{}|;:',.<>?/`~";
+
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -35,67 +40,96 @@ function App() {
     setDescription('');
   }
 
+  //Username deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli)
+  const isUsernameValid= useMemo(() => {
+      const validChars= [...username].every((char) => 
+      letters.includes(char.toLowerCase()) ||
+      numbers.includes(char)
+    )
+
+    return validChars && username.length >= 6;
+  }, [username])
+
+  //Password: Deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo
+  const isPasswordValid = useMemo(() => {
+    return (
+      [...password].some((char) => letters.includes(char)) &&
+      [...password].some((char) => numbers.includes(char)) &&
+      [...password].some((char) => symbols.includes(char)) &&
+      password.length >= 8
+
+    )
+  }, [password])
+
+  //Descrizione: Deve contenere tra 100 e 1000 caratteri (senza spazi iniziali e finali)
+  const isDescriptionValid= useMemo(() => {
+    return (
+      description.trim().length >= 100 &&
+      description.trim().length <= 1000
+    )  
+  }, [description])
+
 
   return (
     <>
     <h1>Compila il form per accedere alla piattaforma</h1>
     <form onSubmit={handleSubmit}>
-      <h4>Nome completo</h4>
+      <p>Nome completo</p>
       <input 
         type="text" 
         name="names" 
         value={name} 
         onChange={(e) => setName(e.target.value)}
       />
-      <strong style={{ color: name.length > 10 ? 'green' : 'red' }}>
+      {name.trim() && <strong style={{ color: name.length > 10 ? 'green' : 'red' }}>
         {name.length > 10 ? '✓ Nome Valido' : 'Nome deve avere almeno 10 caratteri'}
-      </strong>
-      <h4>Username</h4>
+      </strong>}
+      <p>Username</p>
       <input
         type="text" 
         name="username" 
         value={username} 
         onChange={(e) => setUsername(e.target.value)}
        />
-       <strong style={{ color: username.length >= 6 ? 'green' : 'red' }}>
-        {username.length >= 6 ? '✓ Username valido' : 'Username deve avere almeno 6 caratteri'}
-       </strong>
-      <h4>Password</h4>
+       {username.trim() && <strong style={{ color: isUsernameValid ? 'green' : 'red' }}>
+        {isUsernameValid ? '✓ Username valido' : 'Username deve contenere solo caratteri alfanumerici e almeno 6 caratteri'}
+       </strong>}
+      <p>Password</p>
       <input 
         type="password" 
         name="password"
         value={password} 
         onChange={(e) => setPassword(e.target.value)}
        />
-       <strong style={{ color: password.length >= 8 ? 'green' : 'red' }}>
-        {password.length >= 8 ? '✓ Password valida' : 'Password deve avere almeno 8 caratteri'}
-       </strong>
-      <h4>Specializzazione in</h4>
+       {password.trim() && <strong style={{ color: isPasswordValid ? 'green' : 'red' }}>
+        {isPasswordValid ? '✓ Password valida' : 'Password deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo'}
+      </strong> }
+      <p>Specializzazione in</p>
       <select name="option" value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}>
         <option value="">Seleziona un'opzione</option>
         <option value="Full Stack">Full Stack</option>
         <option value="Frontend">Frontend</option>
         <option value="Backend">Backend</option>
       </select>
-      <strong style={{ color: selectedOption ? 'green' : 'red' }}>
+      {selectedOption !== "" && <strong style={{ color: selectedOption ? 'green' : 'red' }}>
         {selectedOption ? '✓ Specializzazione selezionata' : 'Seleziona una specializzazione'}
-      </strong>
-      <h4>Anni di esperienza</h4>
+      </strong>}
+      <p>Anni di esperienza</p>
       <input 
         type="number" 
         name="years" 
         value={yearsOfExperience} 
         onChange={(e) => setYearsOfExprience(e.target.value)}
       />
-      <strong style={{ color: yearsOfExperience > 0 ? 'green' : 'red' }}>
-        {yearsOfExperience > 0 ? '✓ Anni di esperienza validi' : 'Inserire un numero positivo'}
-      </strong>
-      <h4>Aggiungi una breve descrizione su di te</h4>
+      {yearsOfExperience > 0 && <strong style={{ color: yearsOfExperience > 0 ? 'green' : 'red' }}>
+        {yearsOfExperience > 0 ? '✓ Numero valido' : 'Inserire un numero positivo'}
+      </strong>}
+      <p>Aggiungi una breve descrizione su di te</p>
       <textarea name="description" value={description} 
         onChange={(e) => setDescription(e.target.value)}></textarea>
-        <strong style={{ color: description.length >= 20 && description.length <= 100 ? 'green' : 'red' }}>
-          {description.length >= 20 && description.length <= 100 ? '✓ Descrizione valida' : 'La descrizione deve essere tra 100 e 1000 caratteri'}
-        </strong>
+      {description.trim() && <strong style={{ color: isDescriptionValid ? 'green' : 'red' }}>
+        {isDescriptionValid ? '✓ Descrizione valida' :'La descrizione deve essere tra 100 e 1000 caratteri'}
+      </strong> }
       <button>Invia Form</button>
     </form>
       
@@ -106,27 +140,6 @@ function App() {
 export default App
 
 /*
-📌 Milestone 1: Creare un Form con Campi Controllati
-Crea un form di registrazione con i seguenti campi controllati (gestiti con useState):
-✅ Nome completo (input di testo)
-
-✅ Username (input di testo)
-
-✅ Password (input di tipo password)
-
-✅ Specializzazione (select con opzioni: "Full Stack", "Frontend", "Backend")
-
-✅ Anni di esperienza (input di tipo number)
-
-✅ Breve descrizione sullo sviluppatore (textarea)
-
-Aggiungi una validazione al submit, verificando che:
-
-Tutti i campi siano compilati
-L'input Anni di esperienza sia un numero positivo
-La Specializzazione sia selezionata
-
-Al submit, se il form è valido, stampa in console i dati.
 
 📌 Milestone 2: Validare in tempo reale
 Aggiungere la validazione in tempo reale dei seguenti campi:

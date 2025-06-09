@@ -6,53 +6,58 @@ function App() {
   const numbers = "0123456789";
   const symbols = "!@#$%^&/*()-_=+[]{}|;:',.<>?/`~";
 
-  const [name, setName] = useState('');
+ //campi controllati
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  //const [selectedOption, setSelectedOption] = useState('');
-  //const [yearsOfExperience, setYearsOfExprience] = useState(0);
+  const [description, setDescription] = useState('');
+  
+  //campi non controllati
+  const fullnameRef = useRef();
   const selectedOptionRef = useRef();
   const yearsOfExperienceRef = useRef();
-  const [description, setDescription] = useState('');
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const selectedOption= selectedOptionRef.current
-    const yearsOfExperience = yearsOfExperienceRef.current
+    const fullname = fullnameRef.current.value;
+    const selectedOption = selectedOptionRef.current.value;
+    const yearsOfExperience = yearsOfExperienceRef.current.value;
 
     // Validazione dei campi
     if (
-      !name || 
+      !fullname || 
       !username || 
       !password || 
       !description || 
-      !yearsOfExperienceRef || 
-      !selectedOptionRef ||
+      yearsOfExperience <= 0 || 
+      !selectedOption ||
       !isUsernameValid ||
       !isPasswordValid ||
       !isDescriptionValid
     ) {
-    alert('Per favore compila tutti i campi');
-    return;
+      alert('Per favore compila tutti i campi');
+      return;
     }
 
-    console.log(`
-      -Nome completo: ${name};
+    console.log(
+      `-Nome completo: ${fullname};
       -Username: ${username};
       -Password: ${password};
-      -Specializzazione: ${selectedOption.value};
-      -Anni di esperienza: ${yearsOfExperience.value};
-      -Breve descrizione: ${description};
-      `)
+      -Specializzazione: ${selectedOption};
+      -Anni di esperienza: ${yearsOfExperience};
+      -Breve descrizione: ${description};`
+    );
 
-    //Pulisco il form
-    setName('');
+    // Reset dei campi controllati
     setUsername('');
     setPassword('');
-    selectedOptionRef('');
-    yearsOfExperienceRef(0);
     setDescription('');
+
+    // Reset dei campi non controllati 
+    fullnameRef.current.value = '';
+    selectedOptionRef.current.value = '';
+    yearsOfExperienceRef.current.value = '';
   }
 
   //Username deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli)
@@ -93,12 +98,8 @@ function App() {
       <input 
         type="text" 
         name="names" 
-        value={name} 
-        onChange={(e) => setName(e.target.value)}
+        ref={fullnameRef}
       />
-      {name.trim() && <strong style={{ color: name.length > 10 ? 'green' : 'red' }}>
-        {name.length > 10 ? '✓ Nome Valido' : 'Nome deve avere almeno 10 caratteri'}
-      </strong>}
       <p>Username</p>
       <input
         type="text" 
@@ -126,9 +127,6 @@ function App() {
         <option value="Frontend">Frontend</option>
         <option value="Backend">Backend</option>
       </select>
-      {selectedOptionRef.current && <strong style={{ color: selectedOptionRef.current.value ? 'green' : 'red' }}>
-      {selectedOptionRef.current.value ? '✓ Specializzazione selezionata' : 'Seleziona una specializzazione'}
-      </strong>}
       <p>Anni di esperienza</p>
       <input 
         type="number" 
@@ -136,9 +134,6 @@ function App() {
         min="0"
         ref={yearsOfExperienceRef}
       />
-      {yearsOfExperienceRef > 0 && <strong style={{ color: yearsOfExperienceRef > 0 ? 'green' : 'red' }}>
-        {yearsOfExperienceRef > 0 ? '✓ Numero valido' : 'Inserire un numero positivo'}
-      </strong>}
       <p>Aggiungi una breve descrizione su di te</p>
       <textarea name="description" value={description} 
         onChange={(e) => setDescription(e.target.value)}></textarea>
